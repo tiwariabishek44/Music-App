@@ -44,14 +44,15 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        appBar: AppBar(title: Text("thisis ")),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: const [
               CurrentSongTitle(),
-              Playlist(),
-              AddRemoveSongButtons(),
-              AudioProgressBar(),
+
+              // AddRemoveSongButtons(),
+              // AudioProgressBar(),
               AudioControlButtons(),
             ],
           ),
@@ -125,25 +126,6 @@ class AddRemoveSongButtons extends StatelessWidget {
   }
 }
 
-class AudioProgressBar extends StatelessWidget {
-  const AudioProgressBar({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    final pageManager = getIt<PageManager>();
-    return ValueListenableBuilder<ProgressBarState>(
-      valueListenable: pageManager.progressNotifier,
-      builder: (_, value, __) {
-        return ProgressBar(
-          progress: value.current,
-          buffered: value.buffered,
-          total: value.total,
-          onSeek: pageManager.seek,
-        );
-      },
-    );
-  }
-}
-
 class AudioControlButtons extends StatelessWidget {
   const AudioControlButtons({Key? key}) : super(key: key);
   @override
@@ -153,11 +135,11 @@ class AudioControlButtons extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: const [
-          RepeatButton(),
-          PreviousSongButton(),
+          // RepeatButton(),
+          // PreviousSongButton(),
           PlayButton(),
-          NextSongButton(),
-          ShuffleButton(),
+          // NextSongButton(),
+          // ShuffleButton(),
         ],
       ),
     );
@@ -215,31 +197,40 @@ class PlayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pageManager = getIt<PageManager>();
-    return ValueListenableBuilder<ButtonState>(
-      valueListenable: pageManager.playButtonNotifier,
-      builder: (_, value, __) {
-        switch (value) {
-          case ButtonState.loading:
-            return Container(
-              margin: const EdgeInsets.all(8.0),
-              width: 32.0,
-              height: 32.0,
-              child: const CircularProgressIndicator(),
-            );
-          case ButtonState.paused:
-            return IconButton(
+    return Column(
+      children: [
+        ValueListenableBuilder<ButtonState>(
+          valueListenable: pageManager.playButtonNotifier,
+          builder: (_, value, __) {
+            IconButton(
               icon: const Icon(Icons.play_arrow),
               iconSize: 32.0,
               onPressed: pageManager.play,
             );
-          case ButtonState.playing:
-            return IconButton(
-              icon: const Icon(Icons.pause),
-              iconSize: 32.0,
-              onPressed: pageManager.pause,
-            );
-        }
-      },
+            switch (value) {
+              case ButtonState.loading:
+                return Container(
+                  margin: const EdgeInsets.all(8.0),
+                  width: 32.0,
+                  height: 32.0,
+                  child: const CircularProgressIndicator(),
+                );
+              case ButtonState.paused:
+                return IconButton(
+                  icon: const Icon(Icons.play_arrow),
+                  iconSize: 32.0,
+                  onPressed: pageManager.play,
+                );
+              case ButtonState.playing:
+                return IconButton(
+                  icon: const Icon(Icons.pause),
+                  iconSize: 32.0,
+                  onPressed: pageManager.pause,
+                );
+            }
+          },
+        ),
+      ],
     );
   }
 }
